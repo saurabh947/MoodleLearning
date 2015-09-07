@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/vrssregistration/db" VERSION="20101203" COMMENT="XMLDB file for Moodle mod/vrssregistration"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="vrssregistration" COMMENT="Default comment for vrssregistration, please edit me" NEXT ="vrsscourse">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course vrssregistration activity belongs to" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name field for moodle instances" PREVIOUS="course" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the vrssregistration activity" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)" PREVIOUS="intro" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+<TABLE NAME="vrsscourse" COMMENT="table to store vrss course" PREVIOUS="vrssregistration" NEXT="vrsscollege">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course_name"/>
+        <FIELD NAME="course_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="course_url"/>
+        <FIELD NAME="course_url" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name field for moodle instances" PREVIOUS="course_name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course_name" UNIQUE="false" FIELDS="course_name"/>
+      </INDEXES>	  
+    </TABLE>
+	
+	<TABLE NAME="vrsscollege" COMMENT="table"  PREVIOUS="vrsscourse" NEXT="vrssbranch" >
+		<FIELDS>
+            <FIELD NAME="id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="college_name"/>
+            <FIELD NAME="college_name"  TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="description" />			
+            <FIELD NAME="description"  TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="college_name" NEXT="is_other"/>
+            <FIELD NAME="is_other" TYPE="int" LENGTH="1" SEQUENCE="false"  NOTNULL="false" PREVIOUS="description" />
+		</FIELDS>
+		<KEYS>
+        	<KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      	</KEYS>	
+      <INDEXES>
+        <INDEX NAME="college_name" UNIQUE="false" FIELDS="college_name"/>
+      </INDEXES>		 		
+      </TABLE>
+	   
+		<TABLE NAME="vrssbranch"   COMMENT="table" PREVIOUS="vrsscollege" NEXT="vrssqualification" >
+			<FIELDS>
+				<FIELD NAME="id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="branch"/>
+				<FIELD NAME="branch"  TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="description" />
+				<FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="branch"/>
+			</FIELDS>
+			<KEYS>
+				<KEY NAME="primary" TYPE="primary" FIELDS="id"/>				
+			</KEYS>
+		  <INDEXES>
+			<INDEX NAME="branch" UNIQUE="false" FIELDS="branch"/>
+		  </INDEXES>
+	  							
+        </TABLE>
+				
+ 		<TABLE NAME="vrssqualification"  COMMENT="table"  PREVIOUS="vrssbranch" NEXT="vrssqualificationbranch" >
+			<FIELDS>
+				<FIELD NAME="id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="qualification" />
+				<FIELD NAME="qualification"  TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="description" />
+				<FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="qualification" />
+			</FIELDS>
+			<KEYS>
+				<KEY NAME="primary" TYPE="primary" FIELDS="id"/>				
+			</KEYS>	
+		  <INDEXES>
+			<INDEX NAME="qualification" UNIQUE="false" FIELDS="qualification"/>
+		  </INDEXES>
+		  					
+        </TABLE>
+		
+		<TABLE NAME="vrssqualificationbranch"  COMMENT="table"  PREVIOUS="vrssqualification" NEXT="vrssstudentregistration" >
+			<FIELDS>
+				<FIELD NAME="id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="qualification_id" />
+				<FIELD NAME="qualification_id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id"  NEXT="branch_id" />	
+				<FIELD NAME="branch_id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="qualification_id" />
+			</FIELDS>
+			<KEYS>					
+				<KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="unique id" NEXT="qualification_id"/>
+				<KEY NAME="qualification_id" TYPE="foreign" FIELDS="qualification_id" REFTABLE="vrssqualification" REFFIELDS="id" COMMENT="" PREVIOUS="primary" NEXT="branch_id"/>
+				<KEY NAME="branch_id" TYPE="foreign" FIELDS="branch_id" REFTABLE="vrssbranch" REFFIELDS="id" PREVIOUS="qualification_id"/>			
+			</KEYS>
+		  <INDEXES>
+			<INDEX NAME="qualification_id" UNIQUE="false" FIELDS="qualification_id"/>
+		  </INDEXES>				
+        </TABLE>
+		
+		
+        <TABLE NAME="vrssstudentregistration"  COMMENT="table"  PREVIOUS="vrssqualificationbranch" NEXT="vrssstudentcourse" >
+			<FIELDS>
+				<FIELD NAME="id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="registration_date" />
+				<FIELD NAME="registration_date" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="title" />
+				
+				<FIELD NAME="title" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" PREVIOUS="registration_date" NEXT ="first_name" />
+				
+				<FIELD NAME="first_name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="title" NEXT ="middle_name"/>
+				<FIELD NAME="middle_name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="first_name" NEXT ="last_name"/>
+				<FIELD NAME="last_name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="middle_name" NEXT ="college_id"/>
+				<FIELD NAME="college_id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="last_name" NEXT="experience_year"/>
+				<FIELD NAME="experience_year"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="college_id" NEXT="experience_month"/>
+				<FIELD NAME="experience_month"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="experience_year" NEXT="experience_type"/>				
+				<FIELD NAME="experience_type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="experience_month" NEXT ="phone_no"/>				
+				<FIELD NAME="phone_no" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="experience_type" NEXT ="email_id"/>				
+				<FIELD NAME="email_id" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="phone_no"/>				
+			</FIELDS>
+			<KEYS>
+				<KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="college_id"/>
+				<KEY NAME="college_id" TYPE="foreign" FIELDS="college_id" REFTABLE="vrsscollege" REFFIELDS="id" PREVIOUS="primary"/>				
+			</KEYS>	
+			<INDEXES>
+				<INDEX NAME="registration_date" UNIQUE="false" FIELDS="registration_date"/>
+		  </INDEXES>				
+        </TABLE>	
+
+		  		
+		<TABLE NAME="vrssstudentcourse"  COMMENT="table"  PREVIOUS="vrssstudentregistration" NEXT="vrssstudentqualification"  >
+			<FIELDS>
+				<FIELD NAME="id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="registration_id"/>
+				<FIELD NAME="registration_id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="course_id" PREVIOUS="id"/>
+				<FIELD NAME="course_id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="registration_id"/>				
+			</FIELDS>
+			<KEYS>
+				<KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="registration_id"/>
+				<KEY NAME="registration_id" TYPE="foreign" FIELDS="registration_id" REFTABLE="vrss_registration" REFFIELDS="id" PREVIOUS="primary" NEXT="course_id" />	
+				<KEY NAME="course_id" TYPE="foreign" FIELDS="course_id" REFTABLE="vrsscourse" REFFIELDS="id" PREVIOUS="registration_id"/>
+			</KEYS>	
+		  <INDEXES>
+			<INDEX NAME="registration_id" UNIQUE="false" FIELDS="registration_id"/>
+		  </INDEXES>							
+        </TABLE>
+		
+		<TABLE NAME="vrssstudentqualification"  COMMENT="table"  PREVIOUS="vrssstudentcourse" >
+			<FIELDS>
+				<FIELD NAME="id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="registration_id"/>
+				<FIELD NAME="registration_id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="qualificationbranch_id" PREVIOUS="id"/>
+				<FIELD NAME="qualificationbranch_id"  TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="year_passing" PREVIOUS="registration_id"/>
+				<FIELD NAME="year_passing" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false" PREVIOUS="qualificationbranch_id" NEXT="month_passing"/>				
+				<FIELD NAME="month_passing" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="year_passing" NEXT="is_persuing"/>				
+				<FIELD NAME="is_persuing" TYPE="int" LENGTH="1"  NOTNULL="false" SEQUENCE="false"  PREVIOUS="month_passing"/>				
+			</FIELDS>
+			<KEYS>
+				<KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="registration_id"/>
+				<KEY NAME="registration_id" TYPE="foreign" FIELDS="registration_id" REFTABLE="vrssregistration" REFFIELDS="id" PREVIOUS="primary" NEXT="qualificationbranch_id"/>	
+				<KEY NAME="qualificationbranch_id" TYPE="foreign" FIELDS="qualificationbranch_id" REFTABLE="vrssqualificationbranch" REFFIELDS="id" PREVIOUS="registration_id"/>
+			</KEYS>
+		  <INDEXES>
+			<INDEX NAME="registration_id" UNIQUE="false" FIELDS="registration_id"/>
+		  </INDEXES>
+		  									
+        </TABLE>
+</TABLES>
+</XMLDB>
